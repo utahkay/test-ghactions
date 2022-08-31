@@ -1,0 +1,17 @@
+name: Add two numbers
+
+on:
+  workflow_dispatch:
+    inputs:
+      variable1:
+        description: number to add
+        required: true
+      variable2:
+        description: another number to add
+        required: true
+
+jobs:
+  print_hello:
+    runs-on: alpine:3.16.2
+    steps:
+      - run: echo "Hello Github Actions!"
