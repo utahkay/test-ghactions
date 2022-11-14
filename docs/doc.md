@@ -1,1 +1,1 @@
-Hello there. Just make a chanage, and watch the action!
+Hello there. Just make a chanage, and watch the action.
