@@ -10,36 +10,32 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # windows-latest | macos-latest
+    runs-on: ubuntu-latest 
     name: Test changed-files
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # OR "2" -> To retrieve the preceding commit.
+          fetch-depth: 0  
 
-      - name: Get changed files since the last commit on the remote branch
-        id: changed-files-since-last-remote-commit
-        uses: tj-actions/changed-files@v34
-        with:
-          since_last_remote_commit: "true"
-
-      - name: List all changed files
-        run: |
-          for file in ${{ steps.changed-files-since-last-remote-commit.outputs.all_changed_files }}; do
-            echo "$file"
-          done
-
-      # Example 2
-      - name: Get changed files in folder2
-        id: changed-files-specific
+      - name: Get changed files in 'workers' directory since the last commit on the remote branch
+        id: changed-files-in-workers
         uses: tj-actions/changed-files@v34
         with:
           since_last_remote_commit: "true"
           files: |
-            folder2/**
+            workers/**          
 
-      - name: Run step if any file(s) in folder2 change
-        if: steps.changed-files-specific.outputs.any_changed == 'true'
+      - name: List all changed files
         run: |
-          echo "One or more files in folder2 has changed."
-          echo "List all the files that have changed in folder2: ${{ steps.changed-files-specific.outputs.all_changed_files }}"
+          for file in ${{ steps.changed-files-in-workers.outputs.all_changed_files }}; do
+            echo "$file"
+          done
+
+      - name: Run step if any file(s) in 'workers' directory were changed
+        if: steps.changed-files-in-workers.outputs.any_changed == 'true'
+        env:
+          FILES_CHANGED: ${{ steps.changed-files-in-workers.outputs.all_changed_files }}
+        run: |
+          cd .ci
+          pip install PyYAML
+          python deploy_changed_workers.py 
