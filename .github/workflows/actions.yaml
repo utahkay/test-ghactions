@@ -23,7 +23,7 @@ jobs:
 
       - name: List all changed files
         run: |
-          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+          for file in ${{ steps.changed-files-since-last-remote-commit.outputs.all_changed_files }}; do
             echo "$file"
           done
 
@@ -39,4 +39,4 @@ jobs:
         if: steps.changed-files-specific.outputs.any_changed == 'true'
         run: |
           echo "One or more files in folder2 has changed."
-          echo "List all the files that have changed: ${{ steps.changed-files-specific.outputs.all_changed_files }}"
+          echo "List all the files that have changed in folder2: ${{ steps.changed-files-specific.outputs.all_changed_files }}"
