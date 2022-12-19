@@ -34,6 +34,7 @@ jobs:
         id: changed-files-specific
         uses: tj-actions/changed-files@v34
         with:
+          since_last_remote_commit: "true"
           files: |
             folder2/**
 
