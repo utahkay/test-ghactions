@@ -19,7 +19,7 @@ jobs:
         id: changed-files-since-last-remote-commit
         uses: tj-actions/changed-files@v34
         with:
-            : "true"
+          since_last_remote_commit: "true"
 
       - name: List all changed files
         run: |
