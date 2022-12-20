@@ -1,4 +1,4 @@
-name: List changed files
+name: Create and merge pull request
 
 on:
   push:
@@ -11,31 +11,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest 
-    name: Test changed-files
+    name: Create pull request
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0  
 
-      - name: Get changed files in 'workers' directory since the last commit on the remote branch
-        id: changed-files-in-workers
+      - name: make change and add to pull request
         uses: tj-actions/changed-files@v34
         with:
           since_last_remote_commit: "true"
           files: |
             workers/**          
-
-      - name: List all changed files
-        run: |
-          for file in ${{ steps.changed-files-in-workers.outputs.all_changed_files }}; do
-            echo "$file"
-          done
-
-      - name: Run step if any file(s) in 'workers' directory were changed
-        if: steps.changed-files-in-workers.outputs.any_changed == 'true'
-        env:
-          FILES_CHANGED: ${{ steps.changed-files-in-workers.outputs.all_changed_files }}
-        run: |
-          cd .ci
-          pip install PyYAML
-          python deploy_changed_workers.py 
