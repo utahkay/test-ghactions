@@ -16,6 +16,10 @@ jobs:
       branch_name: ${{ steps.define-branch-name.outputs.branch_name }}
 
     steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0      
       - name: define branch name
         id: define-branch-name
         run: |
@@ -31,8 +35,13 @@ jobs:
     needs: branch-name
     
     steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0      
       - name: add files
         env:
           BRANCH_NAME: ${{ needs.branch-name.outputs.branch_name }}
         run: |
           echo $BRANCH_NAME
+          touch $BRANCH_NAME.txt
