@@ -30,5 +30,7 @@ jobs:
     
     steps:
       - name: add files
+        env:
+          BRANCH_NAME: ${{ needs.branch-name.outputs.branch_name }}
         run: |
-          echo ${{ needs.branch-name.outputs.branch_name }}          
+          echo $BRANCH_NAME
