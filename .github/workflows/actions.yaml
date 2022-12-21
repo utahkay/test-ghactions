@@ -19,7 +19,7 @@ jobs:
       - name: define branch name
         id: define-branch-name
         run: |
-            echo "branch_name=branch-$GITHUB_RUN_ID" >> $GITHUB_ENV          
+            echo 'branch_name=branch-$GITHUB_RUN_ID' >> $GITHUB_OUTPUT          
 
   add-files:
     runs-on: ubuntu-latest
@@ -28,5 +28,7 @@ jobs:
     
     steps:
       - name: add files
+        env:
+          BRANCH_NAME: ${{ needs.branch-name.output.branch_name }}
         run: |
-          echo ${{ env.branch_name }}
+          echo $BRANCH_NAME
