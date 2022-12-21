@@ -20,7 +20,7 @@ jobs:
         id: define-branch-name
         run: |
             BRANCH_NAME=branch-$GITHUB_RUN_ID
-            echo "$BRANCH_NAME" >> $GITHUB_OUTPUT
+            echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
 
   add-files:
