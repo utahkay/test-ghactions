@@ -31,4 +31,4 @@ jobs:
         env:
           BRANCH_NAME: ${{ needs.branch-name.output.branch_name }}
         run: |
-          echo $BRANCH_NAME
+          echo ${BRANCH_NAME}
