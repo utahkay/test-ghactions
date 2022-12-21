@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest 
     name: Define branch name and make sure it does not exist
     outputs: 
-      branch_name: ${{ steps.define-branch-name.output.branch_name }}
+      branch_name: ${{ steps.define-branch-name.outputs.branch_name }}
 
     steps:
       - name: define branch name
@@ -29,6 +29,6 @@ jobs:
     steps:
       - name: add files
         env:
-          BRANCH_NAME: ${{ needs.branch-name.output.branch_name }}
+          BRANCH_NAME: ${{ needs.branch-name.outputs.branch_name }}
         run: |
-          echo ${BRANCH_NAME}
+          echo "$BRANCH_NAME"
