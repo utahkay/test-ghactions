@@ -64,7 +64,12 @@ jobs:
         with:
           fetch-depth: 0 
       - name: create PR
+        uses: peter-evans/create-pull-request@v4          
         env:
           BRANCH_NAME: ${{ needs.create-branch.outputs.branch_name }}
-        run: |
-          echo $BRANCH_NAME
+        with:
+          branch: ${{ needs.create-branch.outputs.branch_name }}
+          committer: "CI Bot <ci.bot@kayjohansen.org>"
+          commit-message: "Automated add files"
+          title: "Automated add files"
+          delete-branch: true
