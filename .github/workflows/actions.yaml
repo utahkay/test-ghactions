@@ -60,6 +60,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: set Github username
+        id: set-github-username
+        run: |
+          git config --global user.name "CI bot"
+          git config --global user.email "cibot@kayjohansen.org"          
+
       - name: add file to branch and push
         env:
           BRANCH_NAME: ${{ needs.create-pr.outputs.branch_name }}
