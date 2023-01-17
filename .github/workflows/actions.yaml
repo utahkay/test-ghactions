@@ -40,6 +40,7 @@ jobs:
         id: create-pr
         env:
           BRANCH_NAME: ${{ steps.create-branch.outputs.branch_name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
             gh pr create -B main -H $BRANCH_NAME --title 'Auto PR' --body 'Created by Github action'
             #git push origin $BRANCH_NAME
