@@ -9,9 +9,9 @@ on:
 
 
 jobs:
-  create-branch:
+  create-pr:
     runs-on: ubuntu-latest 
-    name: Create new branch
+    name: Create new PR
     outputs: 
       branch_name: ${{ steps.create-branch.outputs.branch_name }}
 
@@ -19,44 +19,66 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0      
-      - name: create branch
+          fetch-depth: 0
+
+      - name: set Github username
+        id: set-github-username
+        run: |
+          git config --global user.name "CI bot"
+          git config --global user.email "cibot@kayjohansen.org"
+
+      - name: create branch with empty commit
         id: create-branch
         run: |
             BRANCH_NAME=branch-$GITHUB_RUN_ID
             echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
             git checkout -b $BRANCH_NAME
-            git push origin $BRANCH_NAME
+            git commit --allow-empty -m "create pull request"
+            git push --set-upstream origin $BRANCH_NAME
+
+      - name: create PR
+        id: create-pr
+        run: |
+            gh pr create -B main -H $BRANCH_NAME --title 'Auto PR' --body 'Created by Github action'
+            #git push origin $BRANCH_NAME
 
 
-  add-files:
+  commit-changes:
     runs-on: ubuntu-latest
     name: Add files to the branch
-    needs: create-branch
+    needs: create-pr
+    strategy:
+      matrix:
+        jobs: [job1, job2]
     
     steps:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0      
+          fetch-depth: 0
+
       - name: add file to branch and push
         env:
-          BRANCH_NAME: ${{ needs.create-branch.outputs.branch_name }}
+          BRANCH_NAME: ${{ needs.create-pr.outputs.branch_name }}
+          JOB_NAME: ${{ matrix.job }}
         run: |
           echo $BRANCH_NAME
-          git config --global user.name "CI bot"
-          git config --global user.email "cibot@kayjohansen.org"
-
           git checkout -b $BRANCH_NAME
-          touch $BRANCH_NAME.txt
+          touch $BRANCH_NAME-$JOB_NAME.txt
           git add .
-          git commit -a -m "add test file $BRANCH_NAME.txt"
+          git commit -a -m "add test file $BRANCH_NAME-$JOB_NAME.txt"
+
+      - name: push to remote branch
+        env:
+          BRANCH_NAME: ${{ needs.create-pr.outputs.branch_name }}
+        run: |
+          git pull origin $BRANCH_NAME --rebase          
           git push -u origin $BRANCH_NAME
 
   merge-pr:
     runs-on: ubuntu-latest
-    name: Create PR and merge
-    needs: [create-branch, add-files]
+    name: Merge PR
+    needs: [create-pr, commit-changes]
 
     steps:
       - name: checkout
@@ -65,8 +87,7 @@ jobs:
           fetch-depth: 0 
       - name: create merge and delete PR
         env:
-          BRANCH_NAME: ${{ needs.create-branch.outputs.branch_name }}
+          BRANCH_NAME: ${{ needs.create-pr.outputs.branch_name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr create -B main -H $BRANCH_NAME --title 'Auto PR' --body 'Created by Github action'
           gh pr merge $BRANCH_NAME -sd
