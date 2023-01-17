@@ -52,7 +52,7 @@ jobs:
     needs: create-pr
     strategy:
       matrix:
-        jobs: [job1, job2]
+        job: [job1, job2]
     
     steps:
       - name: checkout
@@ -66,7 +66,7 @@ jobs:
           git config --global user.name "CI bot"
           git config --global user.email "cibot@kayjohansen.org"          
 
-      - name: add file to branch and push
+      - name: add file
         env:
           BRANCH_NAME: ${{ needs.create-pr.outputs.branch_name }}
           JOB_NAME: ${{ matrix.job }}
